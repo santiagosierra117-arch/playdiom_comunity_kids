@@ -313,3 +313,186 @@ footer {
     }
 
 }
+
+
+/* =========================================
+   MISSION SCREEN
+   ========================================= */
+
+.app-container {
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    padding: 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.18), transparent 35%),
+        var(--background);
+    box-sizing: border-box;
+}
+
+.mission-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 28px 20px;
+    border: 1px solid rgba(96, 165, 250, 0.18);
+    border-radius: 28px;
+    background: rgba(18, 33, 55, 0.92);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.mission-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    font-size: 32px;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+}
+
+.mission-label {
+    margin: 0 0 10px;
+    color: var(--cyan);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.mission-card h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(26px, 7vw, 38px);
+    line-height: 1.15;
+}
+
+.mission-card h2 {
+    margin: 12px 0 8px;
+    color: var(--blue-light);
+    font-size: clamp(21px, 5vw, 28px);
+}
+
+.mission-description {
+    margin: 0 0 14px;
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+.grammar-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.grammar-pills span {
+    padding: 9px 13px;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.mission-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.info-item {
+    min-height: 62px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.info-item span {
+    font-size: 20px;
+}
+
+.info-item strong {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.start-button {
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.start-button span {
+    font-size: 20px;
+}
+
+.start-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(59, 130, 246, 0.3);
+}
+
+.start-button:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================
+   TABLET / DESKTOP
+   ========================================= */
+
+@media (min-width: 600px) {
+
+    .app-container {
+        padding: 40px 24px;
+    }
+
+    .mission-card {
+        padding: 42px 40px;
+        border-radius: 32px;
+    }
+
+    .mission-icon {
+        width: 76px;
+        height: 76px;
+        font-size: 36px;
+    }
+
+    .mission-info {
+        gap: 14px;
+    }
+
+    .start-button {
+        min-height: 60px;
+    }
+}

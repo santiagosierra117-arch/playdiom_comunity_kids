@@ -1,0 +1,315 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #08111f;
+    --background-secondary: #0d1a2d;
+
+    --card: rgba(18, 33, 55, 0.92);
+    --card-light: rgba(28, 50, 82, 0.75);
+
+    --blue: #3b82f6;
+    --blue-light: #60a5fa;
+
+    --cyan: #22d3ee;
+    --purple: #8b5cf6;
+
+    --text: #f8fafc;
+    --text-secondary: #a9bad1;
+    --text-muted: #71839c;
+
+    --border: rgba(148, 163, 184, 0.13);
+
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(59, 130, 246, 0.20),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(139, 92, 246, 0.15),
+            transparent 35%
+        ),
+        var(--background);
+
+    display: flex;
+    justify-content: center;
+}
+
+.app {
+    width: 100%;
+    max-width: 520px;
+    min-height: 100vh;
+
+    padding: 18px 16px 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome-card {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--border);
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24, 45, 75, 0.96),
+            rgba(12, 25, 44, 0.98)
+        );
+
+    box-shadow: var(--shadow);
+
+    overflow: hidden;
+    position: relative;
+}
+
+.welcome-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    top: -80px;
+    right: -70px;
+
+    border-radius: 50%;
+
+    background: rgba(34, 211, 238, 0.12);
+
+    filter: blur(10px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 24px 22px 20px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.logo-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--blue),
+            var(--purple)
+        );
+
+    font-size: 25px;
+
+    box-shadow:
+        0 10px 25px rgba(59, 130, 246, 0.25);
+}
+
+.logo h1 {
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+.logo p {
+    margin-top: 4px;
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+}
+
+.welcome-content {
+    padding: 34px 22px 28px;
+}
+
+.welcome-badge {
+    display: inline-flex;
+
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: rgba(59, 130, 246, 0.12);
+
+    border: 1px solid rgba(96, 165, 250, 0.18);
+
+    color: var(--blue-light);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.6px;
+}
+
+.welcome-content h2 {
+    margin-top: 20px;
+
+    font-size: 34px;
+    line-height: 1.1;
+
+    letter-spacing: -1px;
+}
+
+.welcome-text {
+    margin-top: 10px;
+
+    max-width: 330px;
+
+    color: var(--text-secondary);
+
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.student-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+.student-button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px;
+
+    border: 1px solid var(--border);
+    border-radius: 19px;
+
+    background: var(--card-light);
+
+    color: var(--text);
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.student-button:active {
+    transform: scale(0.98);
+}
+
+.student-button:hover {
+    border-color: rgba(96, 165, 250, 0.35);
+
+    background: rgba(38, 65, 105, 0.85);
+}
+
+.student-avatar {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.22),
+            rgba(34, 211, 238, 0.12)
+        );
+
+    font-size: 23px;
+}
+
+.student-info {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.student-info strong {
+    font-size: 16px;
+}
+
+.student-info small {
+    color: var(--text-muted);
+
+    font-size: 12px;
+}
+
+.arrow {
+    font-size: 24px;
+
+    color: var(--blue-light);
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+
+    padding: 18px 4px 2px;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+}
+
+/* Tablet and desktop */
+
+@media (min-width: 700px) {
+
+    body {
+        align-items: center;
+        padding: 30px;
+    }
+
+    .app {
+        min-height: auto;
+    }
+
+    .welcome-card {
+        min-height: 650px;
+    }
+
+}

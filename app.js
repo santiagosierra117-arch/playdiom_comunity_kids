@@ -187,19 +187,7 @@ function showBuildIt() {
                         Words:
                     </p>
 
-                    <div id="word-bank-container">
-                        ${shuffledWords.map((word, index) => `
-                            <button
-                                class="word-button"
-                                id="word-${index}"
-                                onclick="selectWord(${index}, '${word}')"
-                            >
-                                ${word}
-                            </button>
-                        `).join("")}
-                    </div>
-
-                </div>
+                   <div id="word-bank-container"></div>
 
 
                 <div id="feedback"></div>
@@ -218,79 +206,198 @@ function showBuildIt() {
     `;
 
     window.currentWords = shuffledWords;
+renderWordBank();
 }
+
+// ===============================
+// SISTEMA DE SELECCIÓN DE PALABRAS
+// ===============================
+
+let selectedWord = null;
 
 
 // ===============================
-// SELECCIONAR UNA PALABRA
+// SELECCIONAR UNA PALABRA DEL BANCO
 // ===============================
 
 function selectWord(index, word) {
 
-    document.querySelectorAll(".word-button").forEach(button => {
-        button.classList.remove("selected");
-    });
+    // Si esta palabra ya está colocada, no hacemos nada
+    const alreadyPlaced = placedWords.some(
+        placed => placed && placed.index === index
+    );
 
-    const button = document.getElementById(`word-${index}`);
+    if (alreadyPlaced) {
+        return;
+    }
 
-    if (selectedWords.length > 0 && selectedWords[0].index === index) {
+    // Si tocamos nuevamente la misma palabra,
+    // la deseleccionamos
+    if (
+        selectedWord &&
+        selectedWord.source === "bank" &&
+        selectedWord.index === index
+    ) {
 
-        selectedWords = [];
+        selectedWord = null;
 
-        button.classList.remove("selected");
+        updateSelectionVisuals();
 
         return;
     }
 
-    selectedWords = [{
+    // Seleccionamos la palabra
+    selectedWord = {
+        source: "bank",
         index: index,
         word: word
-    }];
+    };
 
-    button.classList.add("selected");
+    updateSelectionVisuals();
 }
 
 
 // ===============================
-// SELECCIONAR POSICIÓN
+// SELECCIONAR UN ESPACIO
 // ===============================
 
 function selectSlot(slotIndex) {
 
-    if (selectedWords.length === 0) {
+    // Si no hay ninguna palabra seleccionada,
+    // simplemente no hacemos nada
+    if (!selectedWord) {
         return;
     }
 
-    const selected = selectedWords[0];
 
-    // Si el espacio está ocupado, intercambiamos las palabras
-    if (placedWords[slotIndex]) {
+    // =================================
+    // CASO 1: PALABRA VIENE DEL BANCO
+    // =================================
 
-        const previousWord = placedWords[slotIndex];
+    if (selectedWord.source === "bank") {
 
-        placedWords[slotIndex] = {
-            text: selected.word,
-            index: selected.index
-        };
+        const existingWord = placedWords[slotIndex];
 
-        selectedWords = [{
-            index: previousWord.index,
-            word: previousWord.text
-        }];
+        // Si el espacio está vacío,
+        // colocamos la palabra
+        if (!existingWord) {
 
-    } else {
+            placedWords[slotIndex] = {
+                text: selectedWord.word,
+                index: selectedWord.index
+            };
 
-        placedWords[slotIndex] = {
-            text: selected.word,
-            index: selected.index
-        };
+            selectedWord = null;
 
-        selectedWords = [];
+        } else {
 
+            // Si el espacio está ocupado,
+            // intercambiamos la palabra seleccionada
+            // con la que ya estaba allí.
+
+            const selectedBankWord = {
+                text: selectedWord.word,
+                index: selectedWord.index
+            };
+
+            placedWords[slotIndex] = selectedBankWord;
+
+            selectedWord = {
+                source: "bank",
+                index: existingWord.index,
+                word: existingWord.text
+            };
+        }
     }
 
+
+    // =================================
+    // CASO 2: PALABRA VIENE DE UN SLOT
+    // =================================
+
+    else if (selectedWord.source === "slot") {
+
+        const fromSlot = selectedWord.slotIndex;
+        const targetWord = placedWords[slotIndex];
+
+        // Si tocamos el mismo lugar,
+        // simplemente deseleccionamos
+        if (fromSlot === slotIndex) {
+
+            selectedWord = null;
+
+        }
+
+        // Si el destino está vacío,
+        // movemos la palabra
+        else if (!targetWord) {
+
+            placedWords[slotIndex] = placedWords[fromSlot];
+            placedWords[fromSlot] = null;
+
+            selectedWord = null;
+
+        }
+
+        // Si ambos tienen palabras,
+        // las intercambiamos
+        else {
+
+            const movingWord = placedWords[fromSlot];
+
+            placedWords[fromSlot] = targetWord;
+            placedWords[slotIndex] = movingWord;
+
+            selectedWord = null;
+        }
+    }
+
+
     renderAnswerArea();
-    updateWordSelection();
+    renderWordBank();
+    updateSelectionVisuals();
+}
+
+
+// ===============================
+// SELECCIONAR PALABRA YA COLOCADA
+// ===============================
+
+function selectPlacedWord(index) {
+
+    if (!placedWords[index]) {
+        return;
+    }
+
+    // Si tocamos nuevamente la misma palabra,
+    // la quitamos y vuelve al banco
+    if (
+        selectedWord &&
+        selectedWord.source === "slot" &&
+        selectedWord.slotIndex === index
+    ) {
+
+        placedWords[index] = null;
+
+        selectedWord = null;
+
+        renderAnswerArea();
+        renderWordBank();
+        updateSelectionVisuals();
+
+        return;
+    }
+
+
+    // Seleccionamos la palabra colocada
+    selectedWord = {
+        source: "slot",
+        slotIndex: index,
+        index: placedWords[index].index,
+        word: placedWords[index].text
+    };
+
+    updateSelectionVisuals();
 }
 
 
@@ -302,41 +409,68 @@ function renderAnswerArea() {
 
     const answerArea = document.getElementById("answer-area");
 
-    answerArea.innerHTML = placedWords.map((word, index) => `
-        <button
-            class="answer-slot ${word ? "filled" : ""}"
-            onclick="selectPlacedWord(${index})"
-        >
-            ${word ? word.text : "+"}
-        </button>
-    `).join("");
+    if (!answerArea) {
+        return;
+    }
+
+    answerArea.innerHTML = placedWords.map((word, index) => {
+
+        const isSelected =
+            selectedWord &&
+            selectedWord.source === "slot" &&
+            selectedWord.slotIndex === index;
+
+        return `
+            <button
+                class="answer-slot ${word ? "filled" : ""} ${isSelected ? "selected" : ""}"
+                onclick="selectPlacedWord(${index})"
+            >
+                ${word ? word.text : "+"}
+            </button>
+        `;
+
+    }).join("");
 }
 
 
 // ===============================
-// SELECCIONAR PALABRA YA PUESTA
+// ACTUALIZAR BANCO DE PALABRAS
 // ===============================
 
-function selectPlacedWord(index) {
+function renderWordBank() {
 
-    if (!placedWords[index]) {
+    const container =
+        document.getElementById("word-bank-container");
+
+    if (!container) {
         return;
     }
 
-    const word = placedWords[index];
+    container.innerHTML = window.currentWords.map((word, index) => {
 
-    selectedWords = [{
-        index: word.index,
-        word: word.text
-    }];
+        const isPlaced = placedWords.some(
+            placed => placed && placed.index === index
+        );
 
-    document.querySelectorAll(".answer-slot").forEach(button => {
-        button.classList.remove("selected");
-    });
+        const isSelected =
+            selectedWord &&
+            selectedWord.source === "bank" &&
+            selectedWord.index === index;
 
-    const slots = document.querySelectorAll(".answer-slot");
+        return `
+            <button
+                class="word-button
+                    ${isPlaced ? "used" : ""}
+                    ${isSelected ? "selected" : ""}"
+                id="word-${index}"
+                onclick="selectWord(${index}, '${word}')"
+                ${isPlaced ? "disabled" : ""}
+            >
+                ${word}
+            </button>
+        `;
 
-    slots[index].classList.add("selected");
+    }).join("");
 }
 
 
@@ -344,27 +478,56 @@ function selectPlacedWord(index) {
 // ACTUALIZAR SELECCIÓN VISUAL
 // ===============================
 
-function updateWordSelection() {
+function updateSelectionVisuals() {
 
-    document.querySelectorAll(".word-button").forEach(button => {
-        button.classList.remove("selected");
-    });
+    // Actualizamos los slots
+    document.querySelectorAll(".answer-slot").forEach(
+        button => {
+            button.classList.remove("selected");
+        }
+    );
 
-    if (selectedWords.length === 0) {
+
+    // Actualizamos las palabras del banco
+    document.querySelectorAll(".word-button").forEach(
+        button => {
+            button.classList.remove("selected");
+        }
+    );
+
+
+    if (!selectedWord) {
         return;
     }
 
-    const selected = selectedWords[0];
 
-    const wordButton = document.getElementById(
-        `word-${selected.index}`
-    );
+    // Palabra seleccionada desde el banco
+    if (selectedWord.source === "bank") {
 
-    if (wordButton) {
-        wordButton.classList.add("selected");
+        const wordButton =
+            document.getElementById(
+                `word-${selectedWord.index}`
+            );
+
+        if (wordButton) {
+            wordButton.classList.add("selected");
+        }
+    }
+
+
+    // Palabra seleccionada desde un slot
+    if (selectedWord.source === "slot") {
+
+        const slots =
+            document.querySelectorAll(".answer-slot");
+
+        if (slots[selectedWord.slotIndex]) {
+
+            slots[selectedWord.slotIndex]
+                .classList.add("selected");
+        }
     }
 }
-
 
 // ===============================
 // COMPROBAR RESPUESTA
